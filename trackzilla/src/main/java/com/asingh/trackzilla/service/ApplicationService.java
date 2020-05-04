@@ -47,12 +47,12 @@ public class ApplicationService implements IApplicationService {
 	@Override
 	public synchronized boolean updateApplication(Application application) {
 		try {
-			Optional<Application> opApp = repository.findByNameAndOwner(application.getName(), application.getOwner());		
+			Optional<Application> opApp = repository.findByNameAndOwner(application.getName(), application.getOwner());
 			if (opApp.isPresent()) {
 				Application dbApp = opApp.get();
 				dbApp.setName(application.getName());
 				dbApp.setOwner(application.getOwner());
-				dbApp.setDescription(application.getDescription());				
+				dbApp.setDescription(application.getDescription());
 				return repository.updateApplication(dbApp);
 			} else {
 				return false;
@@ -66,7 +66,7 @@ public class ApplicationService implements IApplicationService {
 	@Override
 	public boolean deleteApplication(long appId) {
 		try {
-			return repository.deleteById(appId) ;
+			return repository.deleteById(appId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -76,7 +76,7 @@ public class ApplicationService implements IApplicationService {
 	@Override
 	public synchronized boolean createOrSaveApplication(Application application) {
 		try {
-			Optional<Application> appOptional = repository.findByNameAndOwner(application.getDescription(),
+			Optional<Application> appOptional = repository.findByNameAndOwner(application.getName(),
 					application.getOwner());
 			return appOptional.isPresent() ? repository.updateApplication(application)
 					: repository.createApplication(application);
