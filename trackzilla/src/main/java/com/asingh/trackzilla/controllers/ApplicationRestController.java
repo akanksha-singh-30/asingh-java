@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/tza")
 public class ApplicationRestController {
 
-	@Autowired
+	@Autowired(required = false)
 	private ApplicationRepository applicationRepository;
 
 	public ApplicationRepository getApplicationRepository() {

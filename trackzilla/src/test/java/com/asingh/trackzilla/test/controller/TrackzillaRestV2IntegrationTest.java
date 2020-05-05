@@ -1,4 +1,4 @@
-package com.asingh.trackzilla.controller.integrationtest;
+package com.asingh.trackzilla.test.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

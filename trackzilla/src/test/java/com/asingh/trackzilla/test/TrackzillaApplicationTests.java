@@ -1,4 +1,4 @@
-package com.asingh.trackzilla;
+package com.asingh.trackzilla.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,7 +12,7 @@ import com.asingh.trackzilla.repository.IApplicationDAO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TrackzillaApplicationTests {
+public class TrackzillaApplicationTests {
 
 	@Autowired
 	MockMvc mock;
@@ -21,12 +21,11 @@ class TrackzillaApplicationTests {
 	void contextLoads() {
 		assertThat(mock.getDispatcherServlet().getWebApplicationContext()).isNotNull();
 	}
-	
-	
+
 	@Test
 	void repoLoads() {
-		IApplicationDAO appDao = mock.getDispatcherServlet().getWebApplicationContext().getBean(IApplicationDAO.class);		
+		IApplicationDAO appDao = mock.getDispatcherServlet().getWebApplicationContext().getBean(IApplicationDAO.class);
 		assertThat(appDao).isNotNull();
 	}
-	
+
 }

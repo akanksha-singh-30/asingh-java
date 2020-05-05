@@ -1,4 +1,4 @@
-package com.asingh.trackzilla.repository;
+package com.asingh.trackzilla.test.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import;
 
 import com.asingh.trackzilla.model.Application;
 import com.asingh.trackzilla.model.Release;
+import com.asingh.trackzilla.repository.ReleaseDAO;
 
 @DataJpaTest
 @Import(ReleaseDAO.class)

@@ -1,4 +1,4 @@
-package com.asingh.trackzilla.repository;
+package com.asingh.trackzilla.test.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import com.asingh.trackzilla.model.Application;
+import com.asingh.trackzilla.repository.ApplicationJpaRepository;
 
 @Import(ApplicationJpaRepository.class)
 @DataJpaTest(showSql = true)

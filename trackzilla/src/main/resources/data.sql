@@ -1,3 +1,7 @@
+delete from ticket;
+delete from application;
+delete from release;
+
 insert into application (a_id, a_desc, a_name, a_owner) values (1, 'Description of Test Application 1', 'Test Application 1', 'Unknown Owner 1');
 insert into application (a_id, a_desc, a_name, a_owner) values (2, 'Description of Test Application 2', 'Test Application 2', 'Unknown Owner 2');
 insert into application (a_id, a_desc, a_name, a_owner) values (3, 'Description of Test Application 3', 'Test Application 3', 'Unknown Owner 3');
