@@ -17,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asingh.trackzilla.model.Application;
+import com.asingh.trackzilla.model.Bug;
+import com.asingh.trackzilla.model.Enhancement;
 import com.asingh.trackzilla.model.Release;
 import com.asingh.trackzilla.model.Ticket;
 import com.asingh.trackzilla.service.ApplicationService;
+import com.asingh.trackzilla.service.BugService;
+import com.asingh.trackzilla.service.EnhancementService;
 import com.asingh.trackzilla.service.ReleaseService;
 import com.asingh.trackzilla.service.TicketService;
 
@@ -35,6 +39,12 @@ public class TrackzillaRestController_V2 {
 
 	@Autowired
 	private TicketService ticketService;
+	
+	@Autowired
+	private BugService bugService;
+	
+	@Autowired
+	private EnhancementService enhancementService;
 
 	@Autowired
 	private ReleaseService releaseService;
@@ -151,7 +161,19 @@ public class TrackzillaRestController_V2 {
 	@PutMapping("/release/{appId}/{releaseId}") 
 	public ResponseEntity<Void> addApplicationToRelease(@PathVariable Long appId, @PathVariable long releaseId) {
 		releaseService.addApplication(appId, releaseId);
-		return new ResponseEntity<Void> (HttpStatus.OK)	;	
+		return new ResponseEntity<Void> (HttpStatus.OK);	
+	}
+
+	@PostMapping("/bug")
+	public ResponseEntity<Void> addNewBug(@RequestBody Bug bug) {
+		bugService.addBug(bug);
+		return new ResponseEntity<Void> (HttpStatus.CREATED);	
+	}
+
+	@PostMapping("/enhancement")
+	public ResponseEntity<Void> addNewEnhancement(@RequestBody Enhancement enhancement) {
+		enhancementService.addEnhancement(enhancement);
+		return new ResponseEntity<Void> (HttpStatus.CREATED);	
 	}
 
 }

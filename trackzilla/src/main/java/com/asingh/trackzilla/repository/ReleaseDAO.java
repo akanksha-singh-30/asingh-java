@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,6 @@ import com.asingh.trackzilla.model.Application;
 import com.asingh.trackzilla.model.Release;
 
 @Repository
-@Transactional
 public class ReleaseDAO implements IReleaseDAO {
 
 	@PersistenceContext

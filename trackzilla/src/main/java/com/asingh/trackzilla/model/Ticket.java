@@ -1,12 +1,17 @@
 package com.asingh.trackzilla.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -24,7 +29,11 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "ticket")
+@DiscriminatorColumn(name="ticket_type", discriminatorType = DiscriminatorType.CHAR)
+@DiscriminatorValue(value = "T")
+//@MappedSuperclass
 public class Ticket {
 
 	@Id
