@@ -14,6 +14,5 @@ public interface ITicketDAO {
     void updateTicket(Ticket ticket);
     
     void deleteTicket(long ticketId);
-    
-    void closeTicket(long ticketId);    
+  
 }

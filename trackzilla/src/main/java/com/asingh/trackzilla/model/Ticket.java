@@ -15,6 +15,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import com.asingh.trackzilla.enums.TicketStatus;
@@ -31,8 +32,9 @@ import lombok.ToString;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "ticket")
-@DiscriminatorColumn(name="ticket_type", discriminatorType = DiscriminatorType.CHAR)
+@DiscriminatorColumn(name = "ticket_type", discriminatorType = DiscriminatorType.CHAR)
 @DiscriminatorValue(value = "T")
+@NamedQuery(name = "Ticket.getGenericTickets", query = "select t from Ticket t where TYPE(t) = 'T'")
 //@MappedSuperclass
 public class Ticket {
 

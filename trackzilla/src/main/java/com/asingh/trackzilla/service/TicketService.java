@@ -1,6 +1,7 @@
 package com.asingh.trackzilla.service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
@@ -11,6 +12,9 @@ import com.asingh.trackzilla.enums.TicketStatus;
 import com.asingh.trackzilla.model.Ticket;
 import com.asingh.trackzilla.repository.TicketDAO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @Transactional
 public class TicketService implements ITicketService {
@@ -52,4 +56,11 @@ public class TicketService implements ITicketService {
 		repository.updateTicket(ticket);
 	}
 
+	public List<Ticket> getTicketByStatus(String status) {
+		if (!Stream.of(TicketStatus.values()).anyMatch(e -> e.toString().equals(status))) {
+			log.error(status + " is not a valid Ticket status");
+			throw new IllegalArgumentException(status + " is not a valid Ticket status");
+		}
+		return repository.getTicketByStatus(TicketStatus.valueOf(status));
+	}
 }

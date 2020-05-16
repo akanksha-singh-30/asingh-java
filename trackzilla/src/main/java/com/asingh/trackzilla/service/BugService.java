@@ -1,5 +1,7 @@
 package com.asingh.trackzilla.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +20,9 @@ public class BugService implements IBugService {
 	@Override
 	public void addBug(Bug bug) {
 		dao.addBug(bug);
+	}
+	
+	public List<Bug> getAllBugs() {
+		return dao.getAllBugs();
 	}
 }

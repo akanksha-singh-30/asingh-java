@@ -18,7 +18,7 @@ public class ApplicationService implements IApplicationService {
 	@Autowired
 	private ApplicationJpaRepository repository;
 
-	@Override
+	@Override	
 	public Optional<List<Application>> getAllApplications() {
 		return repository.getApplications();
 	}

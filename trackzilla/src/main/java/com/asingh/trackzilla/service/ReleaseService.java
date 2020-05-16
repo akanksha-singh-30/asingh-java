@@ -33,4 +33,9 @@ public class ReleaseService implements IReleaseService {
 		return (releases == null || releases.size() <= 0) ? Optional.empty() : Optional.of(releases);
 	}
 
+	public Optional<Release> getReleaseById(Long releaseId) {
+		Release release = dao.getReleaseById(releaseId);
+		return release == null ? Optional.empty() : Optional.of(release); 
+	}
+
 }

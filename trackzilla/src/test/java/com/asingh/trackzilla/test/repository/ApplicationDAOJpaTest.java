@@ -18,6 +18,7 @@ import com.asingh.trackzilla.model.Application;
 import com.asingh.trackzilla.repository.ApplicationJpaRepository;
 
 @Import(ApplicationJpaRepository.class)
+//@Import(value = {MeterRegistry.class, ApplicationJpaRepository.class, Clock.class})
 @DataJpaTest(showSql = true)
 public class ApplicationDAOJpaTest {
 
@@ -110,5 +111,10 @@ public class ApplicationDAOJpaTest {
 		repository.updateApplication(savedApp);
 		assertThat(repository.findById(savedApp.getId()).get().getDescription())
 				.isEqualTo("App desc updated from updateApplication()");
+	}
+	
+	@Test
+	public void saveAppWithHib() {
+		assertThat(repository.saveAppWithHib(app)).isGreaterThan(1);
 	}
 }

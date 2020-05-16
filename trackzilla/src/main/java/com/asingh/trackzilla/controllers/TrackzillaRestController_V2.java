@@ -5,9 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.asingh.trackzilla.model.Application;
 import com.asingh.trackzilla.model.Bug;
@@ -27,6 +30,7 @@ import com.asingh.trackzilla.service.EnhancementService;
 import com.asingh.trackzilla.service.ReleaseService;
 import com.asingh.trackzilla.service.TicketService;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,20 +38,31 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/tza/v2/")
 public class TrackzillaRestController_V2 {
 
-	@Autowired
 	private ApplicationService applicationService;
 
-	@Autowired
 	private TicketService ticketService;
-	
-	@Autowired
+
 	private BugService bugService;
-	
-	@Autowired
+
 	private EnhancementService enhancementService;
 
-	@Autowired
 	private ReleaseService releaseService;
+
+//	private final Counter ticketCounter;	
+
+	@Autowired
+	public TrackzillaRestController_V2(ApplicationService applicationService, TicketService ticketService,
+			BugService bugService, EnhancementService enhancementService, ReleaseService releaseService
+//			,MeterRegistry registry
+	) {
+		super();
+		this.applicationService = applicationService;
+		this.ticketService = ticketService;
+		this.bugService = bugService;
+		this.enhancementService = enhancementService;
+		this.releaseService = releaseService;
+//		this.ticketCounter = Counter.builder("api.createTicket").register(registry);		
+	}
 
 	@GetMapping(value = "/application/{id}")
 	public ResponseEntity<Application> getApplicationById(@PathVariable Long id) {
@@ -58,6 +73,7 @@ public class TrackzillaRestController_V2 {
 				: new ResponseEntity<Application>(HttpStatus.NOT_FOUND);
 	}
 
+	@Timed("api.allAplications")
 	@GetMapping(value = "/applications")
 	public ResponseEntity<List<Application>> getApplications() {
 		log.info("Processing GET request for all applications");
@@ -78,10 +94,12 @@ public class TrackzillaRestController_V2 {
 	}
 
 	@PostMapping(value = "/application")
-	public ResponseEntity<Void> createApplication(@RequestBody Application application) {
+	public ResponseEntity<Void> createApplication(@RequestBody Application application, UriComponentsBuilder builder) {
 		log.info("Processing POST request for application ID:" + application.toString());
 		if (applicationService.createApplication(application)) {
-			return new ResponseEntity<Void>(HttpStatus.CREATED);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setLocation(builder.path("/application/{id}").buildAndExpand(application.getId()).toUri());
+			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 		} else {
 			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		}
@@ -122,9 +140,12 @@ public class TrackzillaRestController_V2 {
 	}
 
 	@PostMapping("/ticket")
-	public ResponseEntity<Void> addTicket(@RequestBody Ticket ticket) {
+	public ResponseEntity<Void> addTicket(@RequestBody Ticket ticket, UriComponentsBuilder builder) {
+//		ticketCounter.increment();
 		ticketService.addTicket(ticket);
-		return new ResponseEntity<Void>(HttpStatus.CREATED);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/ticket/{id}").buildAndExpand(ticket.getId()).toUri());
+		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/ticket")
@@ -146,9 +167,11 @@ public class TrackzillaRestController_V2 {
 	}
 
 	@PostMapping("/release")
-	public ResponseEntity<Void> addNewRelease(@RequestBody Release release) {
+	public ResponseEntity<Void> addNewRelease(@RequestBody Release release, UriComponentsBuilder builder) {
 		releaseService.addRelease(release);
-		return new ResponseEntity<Void>(HttpStatus.CREATED);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/release/{id}").buildAndExpand(release.getId()).toUri());
+		return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/releases")
@@ -157,23 +180,56 @@ public class TrackzillaRestController_V2 {
 		return opRelease.isPresent() ? new ResponseEntity<List<Release>>(opRelease.get(), HttpStatus.OK)
 				: new ResponseEntity<List<Release>>(HttpStatus.NOT_FOUND);
 	}
-	
-	@PutMapping("/release/{appId}/{releaseId}") 
+
+	@GetMapping("/release/{id}")
+	public ResponseEntity<Release> getReleaseById(@PathVariable long id) {
+		Optional<Release> opRelease = releaseService.getReleaseById(id);
+		return opRelease.isPresent() ? new ResponseEntity<Release>(opRelease.get(), HttpStatus.OK)
+				: new ResponseEntity<Release>(HttpStatus.NOT_FOUND);
+	}
+
+	@PutMapping("/release/{appId}/{releaseId}")
 	public ResponseEntity<Void> addApplicationToRelease(@PathVariable Long appId, @PathVariable long releaseId) {
 		releaseService.addApplication(appId, releaseId);
-		return new ResponseEntity<Void> (HttpStatus.OK);	
+		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@PostMapping("/bug")
 	public ResponseEntity<Void> addNewBug(@RequestBody Bug bug) {
 		bugService.addBug(bug);
-		return new ResponseEntity<Void> (HttpStatus.CREATED);	
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@GetMapping("/bugs")
+	public ResponseEntity<List<Bug>> getAllBugs() {
+		List<Bug> bugs = bugService.getAllBugs();
+		return bugs.size() > 0 ? new ResponseEntity<List<Bug>>(bugs, HttpStatus.OK)
+				: new ResponseEntity<List<Bug>>(HttpStatus.NOT_FOUND);
 	}
 
 	@PostMapping("/enhancement")
 	public ResponseEntity<Void> addNewEnhancement(@RequestBody Enhancement enhancement) {
 		enhancementService.addEnhancement(enhancement);
-		return new ResponseEntity<Void> (HttpStatus.CREATED);	
+		return new ResponseEntity<Void>(HttpStatus.CREATED);
+	}
+
+	@GetMapping("/enhancements")
+	public ResponseEntity<List<Enhancement>> getAllEnhancements() {
+		List<Enhancement> enhancements = enhancementService.getAllEnhancements();
+		return enhancements.size() > 0 ? new ResponseEntity<List<Enhancement>>(enhancements, HttpStatus.OK)
+				: new ResponseEntity<List<Enhancement>>(HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping("/ticket/status/{status}")
+	public ResponseEntity<List<Ticket>> getTicketByStatus(@PathVariable String status) throws IllegalArgumentException {
+		List<Ticket> closedTickets = ticketService.getTicketByStatus(status);
+		return closedTickets.size() > 0 ? new ResponseEntity<List<Ticket>>(closedTickets, HttpStatus.OK)
+				: new ResponseEntity<List<Ticket>>(HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(Exception e) {		
+		return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 }
