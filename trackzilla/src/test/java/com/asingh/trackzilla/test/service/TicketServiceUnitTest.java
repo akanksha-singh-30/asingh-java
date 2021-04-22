@@ -12,15 +12,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.asingh.trackzilla.enums.TicketStatus;
 import com.asingh.trackzilla.model.Ticket;
 import com.asingh.trackzilla.repository.TicketDAO;
 import com.asingh.trackzilla.service.TicketService;
 
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+//@ExtendWith(SpringExtension.class)
+@SpringJUnitConfig
 public class TicketServiceUnitTest {
 
 	@Mock
