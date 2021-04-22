@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
+import com.asingh.trackzilla.enums.TicketStatus;
 import com.asingh.trackzilla.model.Ticket;
 import com.asingh.trackzilla.repository.TicketDAO;
 import com.asingh.trackzilla.service.TicketService;
@@ -56,4 +57,14 @@ public class TicketServiceUnitTest {
 		assertEquals(ticket.getDescription(), searchedTicket.getDescription());
 	}
 
+	@Test
+	public void getTicketByStatus() {
+		String statusDraft = "DRAFT";
+		
+		Ticket ticket1 = new Ticket("Test Ticket 1", "Description 1");
+		Ticket ticket2 = new Ticket("Test Ticket 2", "Description 2");
+		when(ticketRepo.getTicketByStatus(TicketStatus.valueOf(statusDraft))).thenReturn(List.of(ticket1, ticket2));
+		List<Ticket> tickets = tservice.getTicketByStatus(statusDraft);
+		assertEquals(2, tickets.size());
+	}
 }
